@@ -12,11 +12,15 @@
 
 
 from __future__ import print_function, division, absolute_import
+from functools import wraps
+
 from astropy.table import Table
 from astropy.utils.data import get_readable_fileobj
 
+import jdaviz
 import jdaviz.core.data_identifiers as dataid
 from jdaviz.core.config import list_configurations
+from jdaviz.core.events import DataPromptMessage
 
 
 class Base(object):
@@ -135,11 +139,48 @@ def identify_data(filename, current=None):
     # - check that config does not conflict with the existing configuration
 
     if not valid_format:
-        raise ValueError('Cannot determine the format of the file to load.  Please specify a format')
+        status = 'Error: Cannot determine format of the file to load.  Please specify a format'
     elif config not in valid_configs:
-        raise ValueError(f"Config {config} not a valid configuration.")
+        status = f"Error: Config {config} not a valid configuration."
     elif current and config != current:
-        raise ValueError('Mismatch between input file format and loaded configuration.')
+        status = 'Error: Mismatch between input file format and loaded configuration.'
     else:
-        return valid_format, config
+        status = 'Success: Valid Format'
 
+    return valid_format, config, status
+
+
+def prompt_data(func):
+    ''' Decorator to identity valid data format and prompt dialog '''
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        inst = args[0]
+        filename = args[1]
+        if isinstance(inst, jdaviz.core.helpers.ConfigHelper):
+            app = inst.app
+            current_config = inst._default_configuration
+        else:
+            app = inst
+            current_config = app.get_configuration().get(
+                'settings').get('configuration', 'default')
+
+        valid_format, config, status = identify_data(filename, current=current_config)
+
+        if 'success' in status.lower():
+            return func(*args, **kwargs)
+
+        msg = DataPromptMessage(status=status, data_format=valid_format, config=config,
+                                current=current_config, sender=app)
+        app.hub.broadcast(msg)
+        #loaded = app.state.data_prompt.get('load', None)
+
+        return func(*args, **kwargs)
+        # if loaded:
+        #     return func(*args, **kwargs)
+        # else:
+        #     print('cannot show data. exiting')
+        #     #raise ValueError('cannot show data')
+        #     return None
+
+    return wrapper

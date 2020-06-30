@@ -31,10 +31,12 @@ from glue_jupyter.state_traitlets_helpers import GlueState
 from ipyvuetify import VuetifyTemplate
 
 from .core.config import read_configuration, get_configuration
+from .core.data_formats import prompt_data
 from .core.events import (LoadDataMessage, NewViewerMessage, AddDataMessage,
-                          SnackbarMessage, RemoveDataMessage, ConfigurationLoadedMessage, AddDataToViewerMessage, RemoveDataFromViewerMessage)
+                          SnackbarMessage, RemoveDataMessage, ConfigurationLoadedMessage,
+                          AddDataToViewerMessage, RemoveDataFromViewerMessage, DataPromptMessage)
 from .core.registries import (tool_registry, tray_registry, viewer_registry,
-                              data_parser_registry)
+                              data_parser_registry, component_registry)
 from .utils import load_template
 
 #from .configs.mosviz.plugins.viewers import MOSVizProfile2DView
@@ -103,6 +105,16 @@ class ApplicationState(State):
     stack_items = ListCallbackProperty(
         docstring="Nested collection of viewers constructed to support the "
                   "Golden Layout viewer area.")
+
+    data_prompt = DictCallbackProperty({
+        'status': '',
+        'dialog': False,
+        'load': False
+    }, docstring="State of the data prompt messages.")
+
+    component_items = ListCallbackProperty(
+        docstring='List of components used by the application'
+    )
 
 
 class Application(VuetifyTemplate, HubListener):
@@ -256,6 +268,7 @@ class Application(VuetifyTemplate, HubListener):
             self.data_collection.add_link(LinkSame(self.data_collection[i].world_component_ids[0],
                     self.data_collection[new_len-1].world_component_ids[0]))
 
+    @prompt_data
     def load_data(self, file_obj, parser_reference=None, **kwargs):
         """
         Provided a path to a data file, open and parse the data into the
@@ -268,6 +281,7 @@ class Application(VuetifyTemplate, HubListener):
         file_obj : str or file-like
             File object for the data to be loaded.
         """
+
         # attempt to get a data parser from the config settings
         parser = None
         data = self.state.settings.get('data', None)
@@ -1161,6 +1175,11 @@ class Application(VuetifyTemplate, HubListener):
                 'label': tray_item_label,
                 'widget': "IPY_MODEL_" + tray_item_instance.model_id
             })
+
+        # Add any components to the stack of component items
+        for name, component in component_registry.members.items():
+            comp = component(app=self)
+            self.state.component_items.append({'name': name, 'widget': "IPY_MODEL_" + comp.model_id})
 
     def reset_configuration(self, path='default'):
         """ Resets the loaded user configuration

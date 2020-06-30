@@ -73,6 +73,12 @@
       </v-btn>
 
     </v-snackbar>
+
+    <!-- add containers for all the component widgets -->
+    <v-container v-for="(comp, index) in state.component_items" :key="index">
+      <jupyter-widget :id="comp.name" :widget="comp.widget"></jupyter-widget>
+    </v-container>
+
   </v-app>
 </template>
 

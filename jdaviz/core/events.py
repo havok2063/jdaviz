@@ -230,3 +230,29 @@ class AddLineListMessage(Message):
     @property
     def table(self):
         return self._table
+
+
+class DataPromptMessage(Message):
+    def __init__(self, status, data_format=None, config=None, current=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._status = status
+        self._data_format = data_format
+        self._config = config
+        self._current = current
+
+    @property
+    def status(self):
+        return self._status
+
+    @property
+    def data_format(self):
+        return self._data_format
+
+    @property
+    def config(self):
+        return self._config
+
+    @property
+    def current(self):
+        return self._current
