@@ -15,12 +15,20 @@ from __future__ import print_function, division, absolute_import
 from functools import wraps
 
 from astropy.table import Table
-from astropy.utils.data import get_readable_fileobj
+from specutils.io.registers import identify_spectrum_format
 
 import jdaviz
-import jdaviz.core.data_identifiers as dataid
+#import jdaviz.core.data_identifiers as dataid
 from jdaviz.core.config import list_configurations
 from jdaviz.core.events import DataPromptMessage
+
+
+default_file_to_config_mapping = {'JWST x1d': 'specviz', 'JWST s2d': 'imviz', 'JWST s3d': 'cubeviz',
+                                  'MaNGA cube': 'cubeviz'}
+
+formats_table = astropy.io.registry.get_formats(data_class=specutils.Spectrum1D, readwrite='Read')
+spectral_formats = ['Spectrum1D', 'SpectrumList', 'SpectrumCollection', 'SpectralCube']
+astropy.io.registry.get_formats(readwrite='Read')
 
 
 class Base(object):
@@ -184,3 +192,4 @@ def prompt_data(func):
         #     return None
 
     return wrapper
+
