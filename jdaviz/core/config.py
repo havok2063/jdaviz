@@ -1,20 +1,8 @@
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Filename: config.py
-# Project: core
-# Author: Brian Cherinka
-# Created: Tuesday, 23rd June 2020 1:22:32 pm
-# License: BSD 3-clause "New" or "Revised" License
-# Copyright (c) 2020 Brian Cherinka
-# Last Modified: Tuesday, 23rd June 2020 1:22:32 pm
-# Modified By: Brian Cherinka
 
 #
 #  This file contains helper function related to configuration handling
 #
 
-from __future__ import print_function, division, absolute_import
 import copy
 import os
 import pathlib
@@ -35,7 +23,8 @@ def read_configuration(path=None):
     Returns:
         A dictionary object
     """
-    assert isinstance(path, (str, type(None))), 'path must be a string'
+    if not isinstance(path, (str, type(None))):
+        raise ValueError('path must be a string')
 
     # Parse the default configuration file
     default_path = pathlib.Path(__file__).resolve().parent.parent / "configs"
@@ -58,10 +47,11 @@ def read_configuration(path=None):
 
 
 def get_configuration(path=None, section=None, config=None):
-    """ Returns a copy of the application configuration
+    """ Retrieve a copy of a specified configuration
 
-    Returns a copy of the configuration specification.  If path
-    is not specified, returns the currently loaded configuration.
+    Returns a copy of a configuration specification.  If ``path``
+    is not specified, then returns a copy of the current application
+    configuration if ``config`` is specified.
 
     Parameters
     ----------
@@ -81,7 +71,8 @@ def get_configuration(path=None, section=None, config=None):
     if path:
         config = read_configuration(path=path)
     else:
-        assert config is not None, 'A pre-existing config must be specified'
+        if config is None:
+            raise ValueError('Either a path or a pre-existing config must be specified')
 
     cfg = copy.deepcopy(config)
 
@@ -92,7 +83,7 @@ def get_configuration(path=None, section=None, config=None):
 
 
 def list_configurations():
-    ''' Get a list of pre-built configurations '''
+    """Get a list of pre-built configurations."""
 
     path = pathlib.Path(__file__).resolve().parent.parent / "configs"
     return [i.stem for i in path.rglob('*.yaml')]

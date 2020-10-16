@@ -279,11 +279,12 @@ class Application(VuetifyTemplate, HubListener):
         file_obj : str or file-like
             File object for the data to be loaded.
         """
-
         # attempt to get a data parser from the config settings
         parser = None
         data = self.state.settings.get('data', None)
-        if data and isinstance(data, dict):
+        if parser_reference:
+            parser = data_parser_registry.members.get(parser_reference)
+        elif data and isinstance(data, dict):
             data_parser = data.get('parser', None)
             if data_parser:
                 parser = data_parser_registry.members.get(data_parser)
@@ -1178,18 +1179,6 @@ class Application(VuetifyTemplate, HubListener):
         for name, component in component_registry.members.items():
             comp = component(app=self)
             self.state.component_items.append({'name': name, 'widget': "IPY_MODEL_" + comp.model_id})
-
-    def reset_configuration(self, path='default'):
-        """ Resets the loaded user configuration
-
-        Parameters
-        ----------
-        path : str, optional
-            Path to the configuration file to be loaded. If None, loads the
-            default configuration.
-        """
-        self._reset_state()
-        self.load_configuration(path=path)
 
     def _reset_state(self):
         """ Resets the application state """

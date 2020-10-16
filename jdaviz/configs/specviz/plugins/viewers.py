@@ -74,7 +74,7 @@ class SpecvizProfileView(BqplotProfileView):
     def load_line_list(self, line_table, replace=False, return_table=False):
         if type(line_table) == str:
             self.load_line_list(load_preset_linelist(line_table),
-                                replace=replace, raise_event=raise_event)
+                                replace=replace, return_table=return_table)
             return
         elif type(line_table) != table.QTable:
             raise TypeError("Line list must be an astropy QTable with\
@@ -142,6 +142,7 @@ class SpecvizProfileView(BqplotProfileView):
         # It seems that we need to recreate this index after v-stacking.
         self.spectral_lines.add_index("name_rest")
         self.spectral_lines.add_index("linename")
+        self.spectral_lines.add_index("listname")
 
         if return_table:
             return line_table
@@ -190,7 +191,11 @@ class SpecvizProfileView(BqplotProfileView):
 
     def plot_spectral_line(self, line, scales=None, plot_units=None, **kwargs):
         if type(line) == str:
-            line = self.spectral_lines.loc[line]
+            # Try the full index first (for backend calls), otherwise name only
+            try:
+                line = self.spectral_lines.loc[line]
+            except KeyError:
+                line = self.spectral_lines.loc["linename", line]
         if plot_units is None:
             plot_units = self.data()[0].spectral_axis.unit
         if scales is None:
