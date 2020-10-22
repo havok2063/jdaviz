@@ -178,8 +178,8 @@ class DataParserRegistry(UniqueDictRegistry):
 
 class ComponentRegistry(UniqueDictRegistry):
     """
-    Registry containing parsing functions for attempting to auto-populate the
-    application-defined initial viewers.
+    Registry containing references to non-plugins Vue components which can be used within
+    the application.
     """
 
     def __call__(self, name=None):

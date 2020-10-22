@@ -11,10 +11,11 @@ from jdaviz.core.events import DataPromptMessage
 
 
 # create a default file format to configuration mapping
-default_mapping = {'JWST x1d': 'specviz', 'JWST s2d': 'imviz', 'JWST s3d': 'cubeviz',
-                   'MaNGA cube': 'cubeviz'}
+default_mapping = {'JWST x1d': 'specviz', 'JWST s2d': 'imviz',
+                   'JWST s3d': 'cubeviz', 'MaNGA cube': 'cubeviz'}
 
-formats_table = astropy.io.registry.get_formats(data_class=Spectrum1D, readwrite='Read')
+formats_table = astropy.io.registry.get_formats(data_class=Spectrum1D,
+                                                readwrite='Read')
 
 file_to_config_mapping = {i: default_mapping.get(
     i, 'specviz') for i in formats_table['Format']}
