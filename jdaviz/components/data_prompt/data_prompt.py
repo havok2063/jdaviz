@@ -1,17 +1,4 @@
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Filename: data_prompt.py
-# Project: data_prompt
-# Author: Brian Cherinka
-# Created: Thursday, 25th June 2020 11:00:13 am
-# License: BSD 3-clause "New" or "Revised" License
-# Copyright (c) 2020 Brian Cherinka
-# Last Modified: Thursday, 25th June 2020 11:00:13 am
-# Modified By: Brian Cherinka
 
-
-from __future__ import print_function, division, absolute_import
 from jdaviz.core.template_mixin import TemplateMixin
 from jdaviz.utils import load_template
 from jdaviz.core.events import SnackbarMessage, DataPromptMessage

@@ -1,17 +1,3 @@
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Filename: data_formats.py
-# Project: core
-# Author: Brian Cherinka
-# Created: Tuesday, 23rd June 2020 4:41:31 pm
-# License: BSD 3-clause "New" or "Revised" License
-# Copyright (c) 2020 Brian Cherinka
-# Last Modified: Tuesday, 23rd June 2020 4:41:32 pm
-# Modified By: Brian Cherinka
-
-
-from __future__ import print_function, division, absolute_import
 
 import os
 import pathlib
