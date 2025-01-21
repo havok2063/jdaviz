@@ -24,7 +24,7 @@ EXT_TYPES = dict(flux=['flux', 'sci', 'data'],
 
 @data_parser_registry("cubeviz-data-parser")
 def parse_data(app, file_obj, data_type=None, data_label=None,
-               parent=None, cache=None, local_path=None, timeout=None):
+               parent=None, cache=None, local_path=None, timeout=None, mapfile=None):
     """
     Attempts to parse a data file and auto-populate available viewers in
     cubeviz.
@@ -57,6 +57,9 @@ def parse_data(app, file_obj, data_type=None, data_label=None,
     flux_viewer_reference_name = app._jdaviz_helper._default_flux_viewer_reference_name
     uncert_viewer_reference_name = app._jdaviz_helper._default_uncert_viewer_reference_name
     spectrum_viewer_reference_name = app._jdaviz_helper._default_spectrum_viewer_reference_name
+
+    # this is a hack to attach a mapfile to the cube data
+    app._mapfile = mapfile
 
     if data_type is not None and data_type.lower() not in ('flux', 'mask', 'uncert'):
         raise TypeError("Data type must be one of 'flux', 'mask', or 'uncert' "

@@ -35,6 +35,7 @@ tray:
   - imviz-aper-phot-simple
   - cubeviz-sonify-data
   - export
+  - cubeviz-mapviz
   - about
 viewer_area:
   - container: col

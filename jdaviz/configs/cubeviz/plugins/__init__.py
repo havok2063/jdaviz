@@ -6,3 +6,4 @@ from .slice.slice import * # noqa
 from .spectral_extraction.spectral_extraction import * # noqa
 from .sonify_data.sonify_data import * # noqa
 from .tools import *  # noqa
+from .mapviz.mapviz import *  # noqa
